@@ -46,3 +46,5 @@ export const formatPrice = (n) =>
     currency: "COP",
     maximumFractionDigits: 0,
   }).format(n);
+
+  export const fetchMenu = () => Promise.resolve(products);
