@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ServiTable.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01a5e6afe9b1987e0804de5e8b56e08f4e8896ba")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+584d3d7aa622304fd7b3b03ef5ddeffa748da53c")]
 [assembly: System.Reflection.AssemblyProductAttribute("ServiTable.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ServiTable.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
