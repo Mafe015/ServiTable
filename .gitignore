@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# .NET
+Back/bin/
+Back/obj/
+Back.Tests/bin/
+Back.Tests/obj/
+.vs/

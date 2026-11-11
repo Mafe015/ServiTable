@@ -9,6 +9,9 @@ public class ServiTableDbContext : DbContext
     public DbSet<Restaurante> Restaurantes => Set<Restaurante>();
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<Producto> Productos => Set<Producto>();
+    public DbSet<Mesa> Mesas => Set<Mesa>();
+    public DbSet<Pedido> Pedidos => Set<Pedido>();
+    public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +58,45 @@ public class ServiTableDbContext : DbContext
             e.Property(x => x.ImagenUrl).HasColumnName("imagen_url").HasMaxLength(255);
             e.Property(x => x.Disponible).HasColumnName("disponible").HasDefaultValue(true);
             e.HasOne(x => x.Restaurante).WithMany().HasForeignKey(x => x.IdRestaurante).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Mesa>(e =>
+        {
+            e.ToTable("mesa");
+            e.HasKey(x => x.IdMesa);
+            e.Property(x => x.IdMesa).HasColumnName("id_mesa");
+            e.Property(x => x.IdRestaurante).HasColumnName("id_restaurante");
+            e.Property(x => x.Numero).HasColumnName("numero");
+            e.Property(x => x.Estado).HasColumnName("estado").HasMaxLength(30);
+        });
+
+        modelBuilder.Entity<Pedido>(e =>
+        {
+            e.ToTable("pedido");
+            e.HasKey(x => x.IdPedido);
+            e.Property(x => x.IdPedido).HasColumnName("id_pedido");
+            e.Property(x => x.IdRestaurante).HasColumnName("id_restaurante");
+            e.Property(x => x.IdMesa).HasColumnName("id_mesa");
+            e.Property(x => x.Estado).HasColumnName("estado").HasMaxLength(30).IsRequired();
+            e.Property(x => x.Total).HasColumnName("total").HasPrecision(12, 2);
+            e.Property(x => x.CreadoEn).HasColumnName("creado_en");
+            e.HasOne<Restaurante>().WithMany().HasForeignKey(x => x.IdRestaurante).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Mesa).WithMany().HasForeignKey(x => x.IdMesa).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<DetallePedido>(e =>
+        {
+            e.ToTable("detalle_pedido");
+            e.HasKey(x => x.IdDetalle);
+            e.Property(x => x.IdDetalle).HasColumnName("id_detalle");
+            e.Property(x => x.IdPedido).HasColumnName("id_pedido");
+            e.Property(x => x.IdProducto).HasColumnName("id_producto");
+            e.Property(x => x.Cantidad).HasColumnName("cantidad");
+            e.Property(x => x.PrecioUnitario).HasColumnName("precio_unitario").HasPrecision(10, 2);
+            e.Property(x => x.Subtotal).HasColumnName("subtotal").HasPrecision(12, 2);
+            e.HasIndex(x => new { x.IdPedido, x.IdProducto }).IsUnique();
+            e.HasOne(x => x.Pedido).WithMany(x => x.Detalles).HasForeignKey(x => x.IdPedido).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.IdProducto).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

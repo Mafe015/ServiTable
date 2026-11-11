@@ -1,0 +1,42 @@
+### Pruebas manuales de la API de pedidos (Visual Studio, Rider o VS Code con REST Client).
+### Antes: ejecutar sql/03_pedidos.sql y arrancar la API (dotnet run).
+@host = https://localhost:58573
+
+### US-2 · Registrar pedido válido → 201 { id, estado: "Recibido", total: 28000 }
+POST {{host}}/api/pedidos
+Content-Type: application/json
+
+{ "mesa": "5", "items": [ { "productoId": 1, "cantidad": 2 }, { "productoId": 2, "cantidad": 1 } ] }
+
+### US-2 · Cantidad en cero → 400 con el mensaje de error
+POST {{host}}/api/pedidos
+Content-Type: application/json
+
+{ "mesa": "5", "items": [ { "productoId": 1, "cantidad": 0 } ] }
+
+### US-2 · Pedido sin productos → 400
+POST {{host}}/api/pedidos
+Content-Type: application/json
+
+{ "mesa": "5", "items": [] }
+
+### US-2 · Producto inexistente → 400
+POST {{host}}/api/pedidos
+Content-Type: application/json
+
+{ "mesa": "5", "items": [ { "productoId": 9999, "cantidad": 1 } ] }
+
+### US-2 · Mesa inexistente → 404
+POST {{host}}/api/pedidos
+Content-Type: application/json
+
+{ "mesa": "99", "items": [ { "productoId": 1, "cantidad": 1 } ] }
+
+### US-3 · Consultar pedido existente (con los datos de prueba, el 1) → 200 { id, estado, total, items }
+GET {{host}}/api/pedidos/1
+
+### US-3 · Consultar ID inexistente → 404
+GET {{host}}/api/pedidos/99999
+
+### US-3 · ID no numérico → 404
+GET {{host}}/api/pedidos/abc

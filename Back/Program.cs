@@ -1,10 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using ServiTable.Api.Data;
 using ServiTable.Api.DTOs;
+using ServiTable.Api.Endpoints;
+using ServiTable.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ServiTableDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("ServiTable")));
+builder.Services.Configure<PedidosOptions>(builder.Configuration.GetSection("Pedidos"));
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+// El frontend envía la mesa como texto ("5"); se acepta para que se convierta a número.
+builder.Services.ConfigureHttpJsonOptions(o =>
+    o.SerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(o => o.AddPolicy("Frontend", p =>
@@ -15,7 +22,7 @@ if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
 app.UseHttpsRedirection();
 app.UseCors("Frontend");
 
-app.MapGet("/", () => Results.Ok(new { application = "ServiTable API", sprint = "Sprint 1 - Menú digital", status = "running" }));
+app.MapGet("/", () => Results.Ok(new { application = "ServiTable API", sprint = "Sprint 2 - Pedidos", status = "running" }));
 
 app.MapGet("/api/restaurantes/{idRestaurante:int}/menu",
     async (int idRestaurante, ServiTableDbContext db) =>
@@ -59,5 +66,7 @@ app.MapGet("/api/restaurantes/{idRestaurante:int}/categorias",
         .Select(c => new { c.IdCategoria, c.Nombre, c.Orden }).ToListAsync();
     return Results.Ok(categorias);
 });
+
+app.MapPedidos();
 
 app.Run();
