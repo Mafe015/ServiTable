@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FUNCIONES } from "../config";
 import { useApp } from "../context/AppContext";
 import { formatPrice } from "../data/menu";
 
@@ -34,7 +35,13 @@ export const CartList = ({ editable }) => {
 };
 
 const CartDrawer = ({ onClose, onPay }) => {
-  const { items, clear } = useApp();
+  const { items, clear, enviar } = useApp();
+  const [sending, setSending] = useState(false);
+  const enviarPedido = async () => {
+    setSending(true);
+    if (await enviar()) onClose();
+    setSending(false);
+  };
   useEffect(() => {
     const k = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", k);
@@ -56,7 +63,12 @@ const CartDrawer = ({ onClose, onPay }) => {
           {items.length > 0 && (
             <button onClick={clear} className="glass rounded-full min-h-[48px] w-full active:scale-95">Vaciar pedido</button>
           )}
-          <button onClick={onPay} className="primary-btn w-full min-h-[56px] text-lg active:scale-95">Ir a pagar</button>
+          {FUNCIONES.confirmar && (
+            <button onClick={enviarPedido} disabled={!items.length || sending} className="primary-btn w-full min-h-[56px] text-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+              {sending ? "Confirmando pedido…" : "Confirmar pedido"}
+            </button>
+          )}
+          {FUNCIONES.cuenta && <button onClick={onPay} className="glass rounded-full min-h-[48px] w-full active:scale-95">Ir a la cuenta</button>}
           <button onClick={onClose} className="glass rounded-full min-h-[48px] w-full active:scale-95">Seguir viendo el menú</button>
         </div>
       </aside>
